@@ -13,7 +13,7 @@
             <Button fx:id="admin_Manage_User" layoutX="231.0" layoutY="28.0" mnemonicParsing="false" text="Manage User" />
             <Button fx:id="admin_Manage_artical" layoutX="381.0" layoutY="28.0" mnemonicParsing="false" text="Manage artical" />
             <Button fx:id="admin_Profile" layoutX="523.0" layoutY="28.0" mnemonicParsing="false" text="Profile" />
-            <Button fx:id="admin_Log_Out" layoutX="628.0" layoutY="28.0" mnemonicParsing="false" text="Log Out" />
+            <Button fx:id="admin_Log_Out" layoutX="628.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleAdminLogOut" text="Log Out" />
          </children>
       </Pane>
       <StackPane layoutY="82.0" prefHeight="466.0" prefWidth="855.0">
