@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane fx:id="User_Page" prefHeight="548.0" prefWidth="855.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.course.UserPage">
+   <children>
+      <Pane layoutY="-1.0" prefHeight="81.0" prefWidth="856.0" style="-fx-background-radius: 40; -fx-background-color: pink;">
+         <children>
+            <Button fx:id="User_Home" layoutX="54.0" layoutY="28.0" mnemonicParsing="false" text="Home" />
+            <Button fx:id="User_Categories" layoutX="171.0" layoutY="28.0" mnemonicParsing="false" text="Categories" />
+            <Button fx:id="User_Recommendations" layoutX="293.0" layoutY="28.0" mnemonicParsing="false" text="Recommendations" />
+            <Button fx:id="User_Saved_Articals" layoutX="454.0" layoutY="28.0" mnemonicParsing="false" text="Saved Articals" />
+            <Button fx:id="User_Profile" layoutX="619.0" layoutY="28.0" mnemonicParsing="false" text="Profile" />
+            <Button fx:id="User_Log_Out" layoutX="728.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleUserLogOut" text="Log Out" />
+         </children>
+      </Pane>
+      <StackPane layoutY="82.0" prefHeight="466.0" prefWidth="855.0">
+         <children>
+            <Pane fx:id="User_Home_Face" prefHeight="336.0" prefWidth="855.0" style="-fx-background-color: green;" />
+            <Pane fx:id="User_Categories_Face" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" />
+            <Pane fx:id="User_Recommendations_Face" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: blue;" />
+            <Pane fx:id="User_Profile_Face" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: gray;" />
+            <Pane fx:id="User_Saved_Articals_Face" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: red;" />
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>
