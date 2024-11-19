@@ -98,6 +98,11 @@ public class appcontroller implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("user-page.fxml"));
             Parent userPageRoot = loader.load();
+
+            // Get the controller and set the username
+            UserPage userPageController = loader.getController();
+            userPageController.setUsername(Username_text.getText());
+
             Scene userScene = new Scene(userPageRoot);
             Stage stage = (Stage) Username_text.getScene().getWindow();
             stage.setScene(userScene);
@@ -130,6 +135,10 @@ public class appcontroller implements Initializable {
                 showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
                 return;
             }
+            if (userCollection.find(Filters.eq("Email", email)).first() != null) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Email is already registered.");
+                return;
+            }
             if (fullName.isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Validation Error", "Full name cannot be empty.");
                 return;
@@ -143,6 +152,10 @@ public class appcontroller implements Initializable {
                 }
             } catch (NumberFormatException e) {
                 showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid age.");
+                return;
+            }
+            if (username.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Username cannot be empty.");
                 return;
             }
             if (userCollection.find(Filters.eq("Username", username)).first() != null) {

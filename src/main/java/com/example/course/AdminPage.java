@@ -32,10 +32,6 @@ public class AdminPage {
     @FXML
     private Button admin_User_Interface;
 
-
-    public void setUserData() {
-    }
-
     @FXML
     private void handleAdminLogOut(ActionEvent event) {
         try {

@@ -17,76 +17,6 @@
    <children>
       <StackPane prefHeight="507.0" prefWidth="486.0">
          <children>
-            <Pane fx:id="Signup_menu" prefHeight="516.0" prefWidth="488.0" style="-fx-background-color: white;">
-               <children>
-                  <Text layoutX="72.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username : ">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="Username_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="185.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
-                  <Text layoutX="75.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password :">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <Text layoutX="102.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email : ">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <TextField fx:id="Email_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="95.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
-                  <PasswordField fx:id="Password_ID" layoutX="156.0" layoutY="215.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
-                  <Text layoutX="160.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create new account">
-                     <font>
-                        <Font size="19.0" />
-                     </font>
-                  </Text>
-                  <Button fx:id="data_sign_up" layoutX="151.0" layoutY="463.0" mnemonicParsing="false" onAction="#buttonClicksConfig" style="-fx-background-radius: 20;" text="Sign Up" />
-                  <Text layoutX="72.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Full Name : ">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <Text layoutX="20.0" layoutY="265.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm password :">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <PasswordField fx:id="Confirmpw_ID" layoutX="156.0" layoutY="245.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="271.0" style="-fx-background-radius: 20;" />
-                  <TextField fx:id="Full_name_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="125.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
-                  <Text layoutX="31.0" layoutY="295.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your prferences : ">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <CheckBox fx:id="Entertainment_ID" layoutX="82.0" layoutY="330.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Entertainment">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="Sport_ID" layoutX="289.0" layoutY="362.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Sport" />
-                  <CheckBox fx:id="Lifestyle_and_Culture_ID" layoutX="82.0" layoutY="362.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Lifestyle and Culture">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="Tech_ID" layoutX="290.0" layoutY="330.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Tech" />
-                  <CheckBox fx:id="Science_ID" layoutX="289.0" layoutY="391.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Science" />
-                  <CheckBox fx:id="Politics_ID" layoutX="82.0" layoutY="391.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Politics">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </CheckBox>
-                  <TextField fx:id="Age_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="155.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
-                  <Text layoutX="109.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Age :">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Text>
-                  <Button fx:id="back_to_main" layoutX="29.0" layoutY="22.0" mnemonicParsing="false" onAction="#buttonClicksConfig" text="Back" />
-               </children>
-            </Pane>
             <Pane fx:id="mainpane" prefHeight="491.0" prefWidth="486.0" style="-fx-background-color: white;">
                <children>
                   <TextField fx:id="Username_text" layoutX="100.0" layoutY="195.0" prefHeight="36.0" prefWidth="268.0" style="-fx-background-radius: 20;" />
@@ -113,11 +43,85 @@
                   <PasswordField fx:id="password_text" layoutX="99.0" layoutY="268.0" prefHeight="36.0" prefWidth="268.0" style="-fx-background-radius: 20;" />
                </children>
             </Pane>
+            <Pane fx:id="Signup_menu" prefHeight="516.0" prefWidth="488.0" style="-fx-background-color: white;">
+               <children>
+                  <Text layoutX="72.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username : ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="Username_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="185.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <Text layoutX="75.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password :">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="102.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email : ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="Email_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="95.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <PasswordField fx:id="Password_ID" layoutX="156.0" layoutY="215.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <Text layoutX="160.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create new account">
+                     <font>
+                        <Font size="19.0" />
+                     </font>
+                  </Text>
+                  <Button fx:id="data_sign_up" layoutX="209.0" layoutY="421.0" mnemonicParsing="false" onAction="#buttonClicksConfig" style="-fx-background-radius: 20; -fx-background-color: #ff4575;" text="Sign Up" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Text layoutX="72.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Full Name : ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="20.0" layoutY="265.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm password :">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <PasswordField fx:id="Confirmpw_ID" layoutX="156.0" layoutY="245.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="271.0" style="-fx-background-radius: 20;" />
+                  <TextField fx:id="Full_name_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="125.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <Text layoutX="31.0" layoutY="295.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your prferences : ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <CheckBox fx:id="Entertainment_ID" layoutX="145.0" layoutY="308.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Entertainment">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="Sport_ID" layoutX="352.0" layoutY="340.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Sport" />
+                  <CheckBox fx:id="Lifestyle_and_Culture_ID" layoutX="145.0" layoutY="340.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Lifestyle and Culture">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="Tech_ID" layoutX="353.0" layoutY="308.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Tech" />
+                  <CheckBox fx:id="Science_ID" layoutX="352.0" layoutY="369.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Science" />
+                  <CheckBox fx:id="Politics_ID" layoutX="145.0" layoutY="369.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Politics">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </CheckBox>
+                  <TextField fx:id="Age_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="155.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <Text layoutX="109.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Age :">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <Button fx:id="back_to_main" layoutX="29.0" layoutY="22.0" mnemonicParsing="false" onAction="#buttonClicksConfig" text="Back" />
+               </children>
+            </Pane>
          </children>
       </StackPane>
       <Pane layoutX="486.0" prefHeight="508.0" prefWidth="392.0" style="-fx-background-color: #ff4667;">
          <children>
-            <Label layoutX="68.0" layoutY="237.0" text="Welcome to my webpage" textFill="WHITE" wrapText="true">
+            <Label layoutX="86.0" layoutY="236.0" text="Welcome to Newsly" textFill="WHITE" wrapText="true">
                <font>
                   <Font size="25.0" />
                </font>
