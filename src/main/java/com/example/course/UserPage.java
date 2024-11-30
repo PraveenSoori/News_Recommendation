@@ -8,9 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -18,61 +16,29 @@ import org.bson.Document;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class UserPage implements Initializable {
 
     @FXML
-    private Label Profile_Age;
+    private TextField Edit_Age_ID, Edit_Confirm_PW, Edit_Current_PW, Edit_Email_ID, Edit_Full_name_ID, Edit_New_PW, Edit_Username_ID;
 
     @FXML
-    private Label Profile_Email;
+    private CheckBox Edit_Entertainment_ID, Edit_Lifestyle_and_Culture_ID, Edit_Politics_ID, Edit_Science_ID, Edit_Sport_ID, Edit_Tech_ID;
 
     @FXML
-    private Label Profile_Full_Name;
+    private Pane Edit_User_Profile_Page, User_Categories_Face, User_Home_Face, User_Profile_Face, User_Recommendations_Face, User_Saved_Articals_Face;
 
     @FXML
-    private Label Profile_My_Preferences;
+    private Label Profile_Age, Profile_Email, Profile_Full_Name, Profile_My_Preferences, Profile_Username;
 
     @FXML
-    private Label Profile_Username;
-
-    @FXML
-    private Button User_Categories;
-
-    @FXML
-    private Pane User_Categories_Face;
-
-    @FXML
-    private Button User_Home;
-
-    @FXML
-    private Pane User_Home_Face;
-
-    @FXML
-    private Button User_Log_Out;
+    private Button Update_Profile, User_Categories, User_Home, User_Log_Out, User_Profile, User_Recommendations, User_Saved_Articals, User_edit_Profile;
 
     @FXML
     private AnchorPane User_Page;
-
-    @FXML
-    private Button User_Profile;
-
-    @FXML
-    private Pane User_Profile_Face;
-
-    @FXML
-    private Button User_Recommendations;
-
-    @FXML
-    private Pane User_Recommendations_Face;
-
-    @FXML
-    private Button User_Saved_Articals;
-
-    @FXML
-    private Pane User_Saved_Articals_Face;
 
     private MongoClient mongoClient;
     private MongoDatabase database;
@@ -81,10 +47,24 @@ public class UserPage implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize MongoDB connection
         mongoClient = MongoClients.create("mongodb://localhost:27017");
         database = mongoClient.getDatabase("News_Recommendation");
         userCollection = database.getCollection("User_Detail");
+
+        initializeCheckboxes();
+    }
+
+    private void initializeCheckboxes() {
+        Edit_Entertainment_ID.setOnAction(event -> handleCheckboxClick(Edit_Entertainment_ID));
+        Edit_Lifestyle_and_Culture_ID.setOnAction(event -> handleCheckboxClick(Edit_Lifestyle_and_Culture_ID));
+        Edit_Politics_ID.setOnAction(event -> handleCheckboxClick(Edit_Politics_ID));
+        Edit_Science_ID.setOnAction(event -> handleCheckboxClick(Edit_Science_ID));
+        Edit_Sport_ID.setOnAction(event -> handleCheckboxClick(Edit_Sport_ID));
+        Edit_Tech_ID.setOnAction(event -> handleCheckboxClick(Edit_Tech_ID));
+    }
+
+    private void handleCheckboxClick(CheckBox checkbox) {
+        System.out.println(checkbox.getText() + " selected: " + checkbox.isSelected());
     }
 
     public void setUsername(String username) {
@@ -96,16 +76,14 @@ public class UserPage implements Initializable {
         Document user = userCollection.find(Filters.eq("Username", currentUsername)).first();
 
         if (user != null) {
-            // Update the profile labels with user data
             Profile_Username.setText(user.getString("Username"));
             Profile_Full_Name.setText(user.getString("Full_Name"));
             Profile_Email.setText(user.getString("Email"));
             Profile_Age.setText(String.valueOf(user.getInteger("Age")));
 
-            // Handle interests/preferences, showing one per line
             List<String> interests = (List<String>) user.get("Interests");
             if (interests != null && !interests.isEmpty()) {
-                String preferencesText = String.join("\n", interests); // Use newline (\n) for line breaks
+                String preferencesText = String.join("\n", interests);
                 Profile_My_Preferences.setText(preferencesText);
             } else {
                 Profile_My_Preferences.setText("No preferences set.");
@@ -115,6 +93,154 @@ public class UserPage implements Initializable {
         }
     }
 
+    @FXML
+    private void loadEditProfile() {
+        Document user = userCollection.find(Filters.eq("Username", currentUsername)).first();
+
+        if (user != null) {
+            clearEditProfileForm();
+
+            Edit_Username_ID.setText(user.getString("Username"));
+            Edit_Full_name_ID.setText(user.getString("Full_Name"));
+            Edit_Email_ID.setText(user.getString("Email"));
+            Edit_Age_ID.setText(String.valueOf(user.getInteger("Age")));
+
+            List<String> interests = (List<String>) user.get("Interests");
+            if (interests != null) {
+                Edit_Entertainment_ID.setSelected(interests.contains("Entertainment"));
+                Edit_Lifestyle_and_Culture_ID.setSelected(interests.contains("Lifestyle and Culture"));
+                Edit_Politics_ID.setSelected(interests.contains("Politics"));
+                Edit_Science_ID.setSelected(interests.contains("Science"));
+                Edit_Sport_ID.setSelected(interests.contains("Sport"));
+                Edit_Tech_ID.setSelected(interests.contains("Tech"));
+            }
+
+            enableCheckboxes(true);
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not load user details.");
+        }
+    }
+
+    private void clearEditProfileForm() {
+        Edit_Username_ID.clear();
+        Edit_Full_name_ID.clear();
+        Edit_Email_ID.clear();
+        Edit_Age_ID.clear();
+        Edit_Current_PW.clear();
+        Edit_New_PW.clear();
+        Edit_Confirm_PW.clear();
+
+        Edit_Entertainment_ID.setSelected(false);
+        Edit_Lifestyle_and_Culture_ID.setSelected(false);
+        Edit_Politics_ID.setSelected(false);
+        Edit_Science_ID.setSelected(false);
+        Edit_Sport_ID.setSelected(false);
+        Edit_Tech_ID.setSelected(false);
+    }
+
+    private void enableCheckboxes(boolean enable) {
+        Edit_Entertainment_ID.setDisable(!enable);
+        Edit_Lifestyle_and_Culture_ID.setDisable(!enable);
+        Edit_Politics_ID.setDisable(!enable);
+        Edit_Science_ID.setDisable(!enable);
+        Edit_Sport_ID.setDisable(!enable);
+        Edit_Tech_ID.setDisable(!enable);
+    }
+
+    @FXML
+    private void handleUpdateProfile(ActionEvent event) {
+        try {
+            // Validate input fields
+            String currentPassword = Edit_Current_PW.getText().trim();
+            String newPassword = Edit_New_PW.getText().trim();
+            String confirmPassword = Edit_Confirm_PW.getText().trim();
+            String updatedUsername = Edit_Username_ID.getText().trim();
+            String updatedFullName = Edit_Full_name_ID.getText().trim();
+            String updatedEmail = Edit_Email_ID.getText().trim();
+            String updatedAgeText = Edit_Age_ID.getText().trim();
+
+            // Check current user password
+            Document user = userCollection.find(Filters.eq("Username", currentUsername)).first();
+            if (user == null || !user.getString("Password").equals(currentPassword)) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "The current password is incorrect.");
+                return;
+            }
+
+            // Validate new password if provided
+            if (!newPassword.isEmpty()) {
+                if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[a-z].*") || !newPassword.matches(".*\\d.*")) {
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "New password must be at least 8 characters long, include uppercase, lowercase, and a number.");
+                    return;
+                }
+                if (!newPassword.equals(confirmPassword)) {
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "New password and confirmation do not match.");
+                    return;
+                }
+            }
+
+            // Validate email
+            if (!updatedEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
+                return;
+            }
+
+            // Validate age
+            int updatedAge;
+            try {
+                updatedAge = Integer.parseInt(updatedAgeText);
+                if (updatedAge < 18 || updatedAge > 100) {
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Age must be between 18 and 100.");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid age.");
+                return;
+            }
+
+            // Collect updated interests
+            List<String> updatedInterests = new ArrayList<>();
+            if (Edit_Entertainment_ID.isSelected()) updatedInterests.add("Entertainment");
+            if (Edit_Lifestyle_and_Culture_ID.isSelected()) updatedInterests.add("Lifestyle and Culture");
+            if (Edit_Politics_ID.isSelected()) updatedInterests.add("Politics");
+            if (Edit_Science_ID.isSelected()) updatedInterests.add("Science");
+            if (Edit_Sport_ID.isSelected()) updatedInterests.add("Sport");
+            if (Edit_Tech_ID.isSelected()) updatedInterests.add("Tech");
+
+            // Create update document
+            Document updateDoc = new Document()
+                    .append("Username", updatedUsername)
+                    .append("Full_Name", updatedFullName)
+                    .append("Email", updatedEmail)
+                    .append("Age", updatedAge)
+                    .append("Interests", updatedInterests);
+
+            // Only update password if a new one is provided
+            if (!newPassword.isEmpty()) {
+                updateDoc.append("Password", newPassword);
+            }
+
+            // Perform the update in MongoDB
+            userCollection.updateOne(
+                    Filters.eq("Username", currentUsername),
+                    new Document("$set", updateDoc)
+            );
+
+            currentUsername = updatedUsername; // Update current username if it changes
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Your profile has been updated successfully.");
+            loadUserProfile(); // Refresh the profile view
+            User_Profile_Face.toFront(); // Switch to the profile pane
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while updating your profile.");
+        }
+    }
+
+
+    @FXML
+    private void showEditProfilePane(ActionEvent event) {
+        Edit_User_Profile_Page.toFront();
+        loadEditProfile();
+    }
 
     @FXML
     private void UserbuttonClicksConfig(ActionEvent actionEvent) {
@@ -126,10 +252,11 @@ public class UserPage implements Initializable {
             User_Recommendations_Face.toFront();
         } else if (actionEvent.getSource() == User_Profile) {
             User_Profile_Face.toFront();
-            // Refresh profile data when switching to profile view
             loadUserProfile();
         } else if (actionEvent.getSource() == User_Saved_Articals) {
             User_Saved_Articals_Face.toFront();
+        } else if (actionEvent.getSource() == User_edit_Profile) {
+            showEditProfilePane(actionEvent);
         }
     }
 

@@ -84,6 +84,11 @@ public class appcontroller implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-page.fxml"));
             Parent adminPageRoot = loader.load();
+
+            // Get the controller and set the username
+            AdminPage adminPageController = loader.getController();
+            adminPageController.setAdminUsername(Username_text.getText());
+
             Scene adminScene = new Scene(adminPageRoot);
             Stage stage = (Stage) Username_text.getScene().getWindow();
             stage.setScene(adminScene);
