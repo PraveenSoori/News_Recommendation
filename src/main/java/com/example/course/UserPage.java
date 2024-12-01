@@ -188,8 +188,8 @@ public class UserPage implements Initializable {
             int updatedAge;
             try {
                 updatedAge = Integer.parseInt(updatedAgeText);
-                if (updatedAge < 18 || updatedAge > 100) {
-                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Age must be between 18 and 100.");
+                if (updatedAge < 15 || updatedAge > 100) {
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Age must be between 15 and 100.");
                     return;
                 }
             } catch (NumberFormatException e) {

@@ -19,6 +19,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.bson.Document;
+import org.bson.json.JsonObject;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
@@ -132,6 +134,9 @@ public class AdminPage implements Initializable {
     @FXML
     private TableView<User> table_User;
 
+    @FXML
+    private Button add_artical_button;
+
 
     private String adminUsername;
     private MongoClient mongoClient;
@@ -184,8 +189,28 @@ public class AdminPage implements Initializable {
     }
 
     @FXML
+    private void handleAddArtical(ActionEvent event) {
+        MongoCollection<Document> userCollection = database.getCollection("my_articals");
+        ObservableList<User> users = FXCollections.observableArrayList();
+
+        try {
+            String articaltitle = Admin_Artical_Title.getText();
+            String articalcontent = Admin_Artical_Content.getText();
+
+            JSONObject Json = new JSONObject();
+            Json.put("Admin_Artical_Title", articaltitle);
+            Json.put("Admin_Artical_Content", articalcontent);
+
+
+
+        }catch (Exception e){
+
+        }
+    }
+
+    @FXML
     private void loadUserDetails() {
-        MongoCollection<Document> userCollection = database.getCollection("User_Detail"); // Adjust collection name
+        MongoCollection<Document> userCollection = database.getCollection("User_Detail");
         ObservableList<User> users = FXCollections.observableArrayList();
 
         for (Document doc : userCollection.find()) {
@@ -232,16 +257,19 @@ public class AdminPage implements Initializable {
 
         // Validate inputs
         if (username.isEmpty() || fullName.isEmpty() || ageText.isEmpty() || email.isEmpty() || currentPW.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "All fields except new password must be filled.");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Current password must be filled.");
             return;
         }
 
         int age;
         try {
             age = Integer.parseInt(ageText);
-            if (age <= 0) throw new NumberFormatException();
+            if (age < 15 || age > 100) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Age must be between 15 and 100.");
+                return;
+            }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Age must be a valid positive integer.");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid age.");
             return;
         }
 
@@ -250,10 +278,16 @@ public class AdminPage implements Initializable {
             return;
         }
 
-        // Check if the new password is entered and matches confirmation
-        if (!newPW.isEmpty() && !newPW.equals(confirmPW)) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "New password and confirmation password must match.");
-            return;
+        // Validate new password if provided
+        if (!newPW.isEmpty()) {
+            if (newPW.length() < 8 || !newPW.matches(".*[A-Z].*") || !newPW.matches(".*[a-z].*") || !newPW.matches(".*\\d.*")) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "New password must be at least 8 characters long, include uppercase, lowercase, and a number.");
+                return;
+            }
+            if (!newPW.equals(confirmPW)) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "New password and confirmation do not match.");
+                return;
+            }
         }
 
         // Fetch admin record from the database

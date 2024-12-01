@@ -6,6 +6,7 @@ module com.example.course {
     requires org.mongodb.driver.core;
     requires org.mongodb.bson;
     requires java.desktop;
+    requires org.json;
 
 
     opens com.example.course to javafx.fxml;
