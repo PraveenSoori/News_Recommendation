@@ -22,7 +22,11 @@ import org.bson.Document;
 import org.bson.json.JsonObject;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -150,6 +154,7 @@ public class AdminPage implements Initializable {
         database = mongoClient.getDatabase("News_Recommendation");
         adminCollection = database.getCollection("admin_details");
 
+
         // Bind columns to User properties
         Username_Pane.setCellValueFactory(new PropertyValueFactory<>("username"));
         Full_Name_Pane.setCellValueFactory(new PropertyValueFactory<>("fullName"));
@@ -189,24 +194,55 @@ public class AdminPage implements Initializable {
     }
 
     @FXML
-    private void handleAddArtical(ActionEvent event) {
-        MongoCollection<Document> userCollection = database.getCollection("my_articals");
-        ObservableList<User> users = FXCollections.observableArrayList();
+    private void handleAddArticle(ActionEvent event) {
+        // Collect data from input fields
+        String articleTitle = Admin_Artical_Title.getText().trim();
+        String articleContent = Admin_Artical_Content.getText().trim();
 
+        // Validate input fields
+        if (articleTitle.isEmpty() || articleContent.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Title and Content must not be empty.");
+            return;
+        }
+        if (articleTitle.length() < 5 || articleTitle.length() > 100) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Title must be between 5 and 100 characters.");
+            return;
+        }
+        if (articleContent.length() < 20) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Content must be at least 20 characters.");
+            return;
+        }
+
+        // Prepare JSON data
+        String jsonData = String.format("{\"title\": \"%s\", \"content\": \"%s\"}", articleTitle, articleContent);
+
+        // Send data to Flask backend
         try {
-            String articaltitle = Admin_Artical_Title.getText();
-            String articalcontent = Admin_Artical_Content.getText();
+            URL url = new URL("http://127.0.0.1:5000/upload_article");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
 
-            JSONObject Json = new JSONObject();
-            Json.put("Admin_Artical_Title", articaltitle);
-            Json.put("Admin_Artical_Content", articalcontent);
+            // Write JSON data to the request body
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonData.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
 
-
-
-        }catch (Exception e){
-
+            // Read the response
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Article added successfully!");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Server Error", "Failed to add article. Please try again.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Connection Error", "Could not connect to the server.");
         }
     }
+
 
     @FXML
     private void loadUserDetails() {
