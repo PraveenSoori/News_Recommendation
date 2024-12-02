@@ -1,12 +1,12 @@
 module com.example.course {
-    requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
     requires org.mongodb.driver.sync.client;
     requires org.mongodb.driver.core;
     requires org.mongodb.bson;
-    requires java.desktop;
     requires org.json;
+    requires javafx.web;
+    requires java.desktop;
 
 
     opens com.example.course to javafx.fxml;

@@ -50,7 +50,7 @@
                         <Font size="14.0" />
                      </font>
                   </Text>
-                  <TextField fx:id="Username_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="185.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <TextField fx:id="Username_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="185.0" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
                   <Text layoutX="75.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password :">
                      <font>
                         <Font size="14.0" />
@@ -61,8 +61,8 @@
                         <Font size="14.0" />
                      </font>
                   </Text>
-                  <TextField fx:id="Email_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="95.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
-                  <PasswordField fx:id="Password_ID" layoutX="156.0" layoutY="215.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <TextField fx:id="Email_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="95.0" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <PasswordField fx:id="Password_ID" layoutX="156.0" layoutY="215.0" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
                   <Text layoutX="160.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create new account">
                      <font>
                         <Font size="19.0" />
@@ -83,32 +83,32 @@
                         <Font size="14.0" />
                      </font>
                   </Text>
-                  <PasswordField fx:id="Confirmpw_ID" layoutX="156.0" layoutY="245.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="271.0" style="-fx-background-radius: 20;" />
-                  <TextField fx:id="Full_name_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="125.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <PasswordField fx:id="Confirmpw_ID" layoutX="156.0" layoutY="245.0" prefHeight="25.0" prefWidth="271.0" style="-fx-background-radius: 20;" />
+                  <TextField fx:id="Full_name_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="125.0" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
                   <Text layoutX="31.0" layoutY="295.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your prferences : ">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Text>
-                  <CheckBox fx:id="Entertainment_ID" layoutX="145.0" layoutY="308.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Entertainment">
+                  <CheckBox fx:id="Entertainment_ID" layoutX="145.0" layoutY="308.0" mnemonicParsing="false" text="Entertainment">
                      <font>
                         <Font size="13.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="Sport_ID" layoutX="352.0" layoutY="340.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Sport" />
-                  <CheckBox fx:id="Lifestyle_and_Culture_ID" layoutX="145.0" layoutY="340.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Lifestyle and Culture">
+                  <CheckBox fx:id="Sport_ID" layoutX="352.0" layoutY="340.0" mnemonicParsing="false" text="Sport" />
+                  <CheckBox fx:id="Lifestyle_and_Culture_ID" layoutX="145.0" layoutY="340.0" mnemonicParsing="false" text="Lifestyle and Culture">
                      <font>
                         <Font size="13.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="Tech_ID" layoutX="353.0" layoutY="308.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Tech" />
-                  <CheckBox fx:id="Science_ID" layoutX="352.0" layoutY="369.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Science" />
-                  <CheckBox fx:id="Politics_ID" layoutX="145.0" layoutY="369.0" mnemonicParsing="false" onAction="#validateAndRegisterUser" text="Politics">
+                  <CheckBox fx:id="Tech_ID" layoutX="353.0" layoutY="308.0" mnemonicParsing="false" text="Tech" />
+                  <CheckBox fx:id="Science_ID" layoutX="352.0" layoutY="369.0" mnemonicParsing="false" text="Science" />
+                  <CheckBox fx:id="Politics_ID" layoutX="145.0" layoutY="369.0" mnemonicParsing="false" text="Politics">
                      <font>
                         <Font size="13.0" />
                      </font>
                   </CheckBox>
-                  <TextField fx:id="Age_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="155.0" onAction="#validateAndRegisterUser" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
+                  <TextField fx:id="Age_ID" alignment="BOTTOM_CENTER" layoutX="156.0" layoutY="155.0" prefHeight="25.0" prefWidth="270.0" style="-fx-background-radius: 20;" />
                   <Text layoutX="109.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Age :">
                      <font>
                         <Font size="14.0" />

@@ -2,6 +2,9 @@ package com.example.course;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +41,15 @@ public class UserPage implements Initializable {
     private Button Update_Profile, User_Categories, User_Home, User_Log_Out, User_Profile, User_Recommendations, User_Saved_Articals, User_edit_Profile;
 
     @FXML
+    private TableColumn<Document, String> Home_artical_category;
+
+    @FXML
+    private TableView<Document> Home_artical_table;
+
+    @FXML
+    private TableColumn<Document, String> Home_artical_title;
+
+    @FXML
     private AnchorPane User_Page;
 
     private MongoClient mongoClient;
@@ -52,6 +64,7 @@ public class UserPage implements Initializable {
         userCollection = database.getCollection("User_Detail");
 
         initializeCheckboxes();
+        loadartical();
     }
 
     private void initializeCheckboxes() {
@@ -259,6 +272,49 @@ public class UserPage implements Initializable {
             showEditProfilePane(actionEvent);
         }
     }
+
+    @FXML
+    private void loadartical(){
+        MongoDatabase database = mongoClient.getDatabase("News_Recommendation");
+        MongoCollection<Document> collection = database.getCollection("my_articals");
+
+        List<Document> articals = collection.find().into(new ArrayList<>());
+        ObservableList<Document> data = FXCollections.observableArrayList(articals);
+
+        Home_artical_title.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getString("title")));
+        Home_artical_category.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getString("content")));
+        Home_artical_table.setItems(data);
+    }
+
+    @FXML
+    private void viewButtonClicked(){
+        Document selectedArticale = Home_artical_table.getSelectionModel().getSelectedItem();
+        if (selectedArticale != null) {
+            String title = selectedArticale.getString("title");
+            String content = selectedArticale.getString("content");
+            String category = selectedArticale.getString("category");
+
+            try{
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("article.fxml"));
+                Parent root = loader.load();
+
+                ArticleView articleView = loader.getController();
+
+                articleView.displayContent(title, content ,category);
+
+                Stage stage = new Stage();
+                stage.setTitle("Article View");
+                stage.setScene(new Scene(root));
+                stage.show();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static String username = appcontroller.Username;
+
+
 
     @FXML
     private void handleUserLogOut(ActionEvent event) {

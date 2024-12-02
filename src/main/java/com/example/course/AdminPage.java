@@ -91,10 +91,10 @@ public class AdminPage implements Initializable {
     private TextField Edit_Username_ID;
 
     @FXML
-    private TableColumn<User, String> Email_Pane;
+    private TableColumn<Document, String> Email_Pane;
 
     @FXML
-    private TableColumn<User, String> Full_Name_Pane;
+    private TableColumn<Document, String> Full_Name_Pane;
 
     @FXML
     private TableColumn<User, String> Preferences_Pane;
@@ -119,6 +119,18 @@ public class AdminPage implements Initializable {
 
     @FXML
     private Pane admin_Profile_Face;
+
+    @FXML
+    private Pane delete_artical_page;
+
+    @FXML
+    private TableView<Article> delete_artical_table;
+
+    @FXML
+    private TableColumn<Article, String> Artical_Title_Column;
+
+    @FXML
+    private TableColumn<Article, String> Artical_Content_Column;
 
     @FXML
     private Button admin_User_Interface;
@@ -190,6 +202,9 @@ public class AdminPage implements Initializable {
             // Show the Edit Admin Profile Page and load data into TextFields
             Edit_Admin_Profile_Page.toFront();
             loadAdminProfileForEdit();
+        } else if (source == Admin_delete_Artical) {
+            delete_artical_page.toFront(); // Bring the delete article page to the front
+            loadArticles(); // Populate the table with articles
         }
     }
 
@@ -378,6 +393,42 @@ public class AdminPage implements Initializable {
             }
         }
     }
+
+    @FXML
+    private void loadArticles() {
+        MongoCollection<Document> articleCollection = database.getCollection("my_articals");
+        ObservableList<Article> articles = FXCollections.observableArrayList();
+
+        for (Document doc : articleCollection.find()) {
+            String title = doc.getString("title");
+            String content = doc.getString("content");
+
+            articles.add(new Article(title, content));
+        }
+
+        // Bind the data to the table
+        Artical_Title_Column.setCellValueFactory(new PropertyValueFactory<>("title"));
+        Artical_Content_Column.setCellValueFactory(new PropertyValueFactory<>("content"));
+        delete_artical_table.setItems(articles);
+    }
+
+    @FXML
+    private void handleDeleteArticle(ActionEvent event) {
+        Article selectedArticle = delete_artical_table.getSelectionModel().getSelectedItem();
+        if (selectedArticle != null) {
+            // Delete the article from MongoDB
+            database.getCollection("my_articals").deleteOne(Filters.eq("title", selectedArticle.getTitle()));
+
+            // Refresh the table
+            loadArticles();
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Article deleted successfully!");
+        } else {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select an article to delete.");
+        }
+    }
+
+
 
     @FXML
     private void handleAdminLogOut(ActionEvent event) {
