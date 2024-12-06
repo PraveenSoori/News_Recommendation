@@ -155,24 +155,30 @@ public class AdminPage implements Initializable {
 
 
     private String adminUsername;
-    private MongoClient mongoClient;
-    private MongoDatabase database;
-    private MongoCollection<Document> adminCollection;
+    private final Database database;
+
+    // Constructor for dependency injection
+    public AdminPage() {
+        this.database = new Database("mongodb+srv://praveen:praveen2003@cluster0.dsqsv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", "News_Recommendation");
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize MongoDB connection
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
-        database = mongoClient.getDatabase("News_Recommendation");
-        adminCollection = database.getCollection("admin_details");
+
+        // Set the text for the TextField
+        Edit_Username_ID.setText("Username");
+
+        // Disable editing ability
+        Edit_Username_ID.setEditable(false);
+        Edit_Username_ID.setStyle("-fx-background-color: transparent;"); // makes the background look like a label
 
 
-        // Bind columns to User properties
         Username_Pane.setCellValueFactory(new PropertyValueFactory<>("username"));
         Full_Name_Pane.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         Email_Pane.setCellValueFactory(new PropertyValueFactory<>("email"));
-        Age_Pane.setCellValueFactory(new PropertyValueFactory<>("age"));
+        Age_Pane.setCellValueFactory(new PropertyValueFactory<>("age")); // Matches getter
         Preferences_Pane.setCellValueFactory(new PropertyValueFactory<>("interests"));
+
     }
 
     public void setAdminUsername(String username) {
@@ -228,8 +234,11 @@ public class AdminPage implements Initializable {
             return;
         }
 
-        // Prepare JSON data
-        String jsonData = String.format("{\"title\": \"%s\", \"content\": \"%s\"}", articleTitle, articleContent);
+        // Create Article object
+        Article article = new Article(articleTitle, articleContent);
+
+        // Use Database method to add article
+        database.addArticle(article);
 
         // Send data to Flask backend
         try {
@@ -238,6 +247,9 @@ public class AdminPage implements Initializable {
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+
+            // Prepare JSON data
+            String jsonData = String.format("{\"title\": \"%s\", \"content\": \"%s\"}", articleTitle, articleContent);
 
             // Write JSON data to the request body
             try (OutputStream os = connection.getOutputStream()) {
@@ -261,34 +273,20 @@ public class AdminPage implements Initializable {
 
     @FXML
     private void loadUserDetails() {
-        MongoCollection<Document> userCollection = database.getCollection("User_Detail");
-        ObservableList<User> users = FXCollections.observableArrayList();
-
-        for (Document doc : userCollection.find()) {
-            String username = doc.getString("Username");
-            String fullName = doc.getString("Full_Name");
-            String email = doc.getString("Email");
-            int age = doc.getInteger("Age", 0);
-            List<String> interests = doc.getList("Interests", String.class);
-            String interestsString = String.join(", ", interests);
-
-            users.add(new User(username, fullName, email, age, interestsString));
-        }
-
-        table_User.setItems(users);
+        List<User> users = database.getAllUsers();
+        table_User.setItems(FXCollections.observableArrayList(users));
     }
-
 
     private void loadAdminProfileForEdit() {
         if (adminUsername != null && !adminUsername.isEmpty()) {
-            Document adminDoc = adminCollection.find(Filters.eq("Username", adminUsername)).first();
+            Member admin = database.getMember(adminUsername);
 
-            if (adminDoc != null) {
+            if (admin != null) {
                 // Populate the TextFields with admin data
-                Edit_Username_ID.setText(adminDoc.getString("Username"));
-                Edit_Full_name_ID.setText(adminDoc.getString("Full_Name"));
-                Edit_Email_ID.setText(adminDoc.getString("Email"));
-                Edit_Age_ID.setText(String.valueOf(adminDoc.getInteger("Age", 0)));
+                Edit_Username_ID.setText(admin.getUsername());
+                Edit_Full_name_ID.setText(admin.getFullName());
+                Edit_Email_ID.setText(admin.getEmail());
+                Edit_Age_ID.setText(String.valueOf(admin.getAge()));
             } else {
                 showAlert(Alert.AlertType.ERROR, "Profile Error", "Could not load admin profile");
             }
@@ -324,6 +322,7 @@ public class AdminPage implements Initializable {
             return;
         }
 
+
         if (!email.matches("^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
             showAlert(Alert.AlertType.ERROR, "Validation Error", "Invalid email format.");
             return;
@@ -342,7 +341,7 @@ public class AdminPage implements Initializable {
         }
 
         // Fetch admin record from the database
-        Document adminDoc = adminCollection.find(Filters.eq("Username", adminUsername)).first();
+        Document adminDoc = database.getAdminCollection().find(Filters.eq("Username", adminUsername)).first();
 
         if (adminDoc == null) {
             showAlert(Alert.AlertType.ERROR, "Profile Error", "Admin profile not found.");
@@ -370,54 +369,45 @@ public class AdminPage implements Initializable {
         }
 
         // Perform update in the database
-        adminCollection.updateOne(Filters.eq("Username", adminUsername), new Document("$set", updatedDoc));
+        database.getAdminCollection().updateOne(Filters.eq("Username", adminUsername), new Document("$set", updatedDoc));
         showAlert(Alert.AlertType.INFORMATION, "Success", "Profile updated successfully.");
 
         // Reload profile to reflect changes
         setAdminUsername(username); // Update username if changed
     }
-
-
     private void loadAdminProfile() {
         if (adminUsername != null && !adminUsername.isEmpty()) {
-            Document adminDoc = adminCollection.find(Filters.eq("Username", adminUsername)).first();
+            Member admin = database.getMember(adminUsername);
 
-            if (adminDoc != null) {
-                // Update the labels with admin information
-                Admin_Profile_Username.setText(adminDoc.getString("Username"));
-                Admin_Profile_Full_Name.setText(adminDoc.getString("Full_Name"));
-                Admin_Profile_Email.setText(adminDoc.getString("Email"));
-                Admin_Profile_Age.setText(String.valueOf(adminDoc.getInteger("Age", 0)));
+            if (admin != null) {
+                // Update labels with admin information
+                Admin_Profile_Username.setText(admin.getUsername());
+                Admin_Profile_Full_Name.setText(admin.getFullName());
+                Admin_Profile_Email.setText(admin.getEmail());
+                Admin_Profile_Age.setText(String.valueOf(admin.getAge())); // Set the age label
             } else {
                 showAlert(Alert.AlertType.ERROR, "Profile Error", "Could not load admin profile");
             }
         }
     }
 
+
     @FXML
     private void loadArticles() {
-        MongoCollection<Document> articleCollection = database.getCollection("my_articals");
-        ObservableList<Article> articles = FXCollections.observableArrayList();
-
-        for (Document doc : articleCollection.find()) {
-            String title = doc.getString("title");
-            String content = doc.getString("content");
-
-            articles.add(new Article(title, content));
-        }
+        List<Article> articles = database.getAllArticles();
 
         // Bind the data to the table
         Artical_Title_Column.setCellValueFactory(new PropertyValueFactory<>("title"));
         Artical_Content_Column.setCellValueFactory(new PropertyValueFactory<>("content"));
-        delete_artical_table.setItems(articles);
+        delete_artical_table.setItems(FXCollections.observableArrayList(articles));
     }
 
     @FXML
     private void handleDeleteArticle(ActionEvent event) {
         Article selectedArticle = delete_artical_table.getSelectionModel().getSelectedItem();
         if (selectedArticle != null) {
-            // Delete the article from MongoDB
-            database.getCollection("my_articals").deleteOne(Filters.eq("title", selectedArticle.getTitle()));
+            // Use Database method to delete article
+            database.deleteArticle(selectedArticle.getTitle());
 
             // Refresh the table
             loadArticles();
@@ -428,6 +418,37 @@ public class AdminPage implements Initializable {
         }
     }
 
+    @FXML
+    private void handleDeleteUser(ActionEvent event) {
+        User selectedUser = table_User.getSelectionModel().getSelectedItem();
+
+        if (selectedUser != null) {
+            // Confirm deletion with the user
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Delete Confirmation");
+            confirmationAlert.setHeaderText(null);
+            confirmationAlert.setContentText("Are you sure you want to delete the user: " + selectedUser.getUsername() + "?");
+
+            if (confirmationAlert.showAndWait().get() == ButtonType.OK) {
+                // Attempt to delete the user from the database
+                boolean isDeleted = database.deleteUser(selectedUser.getUsername());
+
+                if (isDeleted) {
+                    // Remove the user from the table
+                    table_User.getItems().remove(selectedUser);
+
+                    // Show success message
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "User deleted successfully!");
+                } else {
+                    // Show error message if deletion fails
+                    showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete the user. Please try again.");
+                }
+            }
+        } else {
+            // Show warning if no user is selected
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a user to delete.");
+        }
+    }
 
 
     @FXML

@@ -1,6 +1,5 @@
 package com.example.course;
 
-import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,11 +12,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.bson.Document;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -43,98 +40,42 @@ public class appcontroller implements Initializable {
     @FXML
     private Pane Signup_menu, mainpane;
 
-    // MongoDB Collections
-    private MongoClient mongoClient;
-    private MongoDatabase database;
-    private MongoCollection<Document> userCollection, loginCollection, adminCollection, ArticlepointsCollection;
-
-    List<String> interests; // Stores selected interest categories
-    static String Username; // Logged-in username
+    // Database Instance
+    private Database database;
+    public static String Username;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize MongoDB client and collections
-        mongoClient = MongoClients.create("mongodb://localhost:27017");
-        database = mongoClient.getDatabase("News_Recommendation");
-        userCollection = database.getCollection("User_Detail");
-        loginCollection = database.getCollection("User_login_Detail");
-        adminCollection = database.getCollection("admin_details");
-        ArticlepointsCollection = database.getCollection("Articlepoints");
+        database = new Database("mongodb+srv://praveen:praveen2003@cluster0.dsqsv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", "News_Recommendation");
     }
 
-    // Authentication Methods
     @FXML
     private void control_signin(ActionEvent event) {
         String username = Username_text.getText();
         String password = password_text.getText();
 
-        if (checkIfAdmin(username, password)) {
-            showAlert(Alert.AlertType.INFORMATION, "Login", "Welcome admin " + username);
-            goToAdminPage();
-        } else if (checkCredentials(username, password)) {
-            saveLoginDetails(username);
+        Member member = database.getMember(username);
+
+        if (member != null && member.authenticate(password)) {
+            // Set the global Username variable
             Username = username;
-            showAlert(Alert.AlertType.INFORMATION, "Login", "Welcome " + username);
-            goToUserPage();
+
+            // Save login details to the database
+            database.saveLoginDetails(username);
+
+            // Navigate to the appropriate page
+            if (member instanceof Admin) {
+                showAlert(Alert.AlertType.INFORMATION, "Login", "Welcome admin " + username);
+                goToAdminPage();
+            } else if (member instanceof User) {
+                showAlert(Alert.AlertType.INFORMATION, "Login", "Welcome " + username);
+                goToUserPage();
+            }
         } else {
             showAlert(Alert.AlertType.ERROR, "Login", "Incorrect username or password");
         }
     }
 
-    private boolean checkCredentials(String username, String password) {
-        Document user = userCollection.find(Filters.and(Filters.eq("Username", username), Filters.eq("Password", password))).first();
-        return user != null;
-    }
-
-    private boolean checkIfAdmin(String username, String password) {
-        Document admin = adminCollection.find(Filters.and(Filters.eq("Username", username), Filters.eq("Password", password))).first();
-        return admin != null;
-    }
-
-    private void saveLoginDetails(String username) {
-        Document loginDetail = new Document("Username", username)
-                .append("Login_time", LocalDateTime.now().toString());
-        loginCollection.insertOne(loginDetail);
-    }
-
-    private void goToAdminPage() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-page.fxml"));
-            Parent adminPageRoot = loader.load();
-
-            // Get the controller and set the username
-            AdminPage adminPageController = loader.getController();
-            adminPageController.setAdminUsername(Username_text.getText());
-
-            Scene adminScene = new Scene(adminPageRoot);
-            Stage stage = (Stage) Username_text.getScene().getWindow();
-            stage.setScene(adminScene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not load the admin page.");
-        }
-    }
-
-    private void goToUserPage() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("user-page.fxml"));
-            Parent userPageRoot = loader.load();
-
-            // Get the controller and set the username
-            UserPage userPageController = loader.getController();
-            userPageController.setUsername(Username_text.getText());
-
-            Scene userScene = new Scene(userPageRoot);
-            Stage stage = (Stage) Username_text.getScene().getWindow();
-            stage.setScene(userScene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not load the user page.");
-        }
-    }
-    // Registration Methods
     @FXML
     private void validateAndRegisterUser() {
         String email = Email_ID.getText().trim();
@@ -149,8 +90,8 @@ public class appcontroller implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
             return;
         }
-        if (userCollection.find(Filters.eq("Email", email)).first() != null) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Email is already registered.");
+        if (database.getMember(username) != null) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Username or email is already registered.");
             return;
         }
         if (fullName.isEmpty()) {
@@ -172,10 +113,6 @@ public class appcontroller implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Validation Error", "Username cannot be empty.");
             return;
         }
-        if (userCollection.find(Filters.eq("Username", username)).first() != null) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Username is already taken.");
-            return;
-        }
         if (password.length() < 6) {
             showAlert(Alert.AlertType.ERROR, "Validation Error", "Password must be at least 6 characters long.");
             return;
@@ -189,8 +126,12 @@ public class appcontroller implements Initializable {
             return;
         }
 
-        interests = collectSelectedCategories();
-        registerUser(username, password, email, fullName, age, interests);
+        List<String> interests = collectSelectedCategories();
+        User user = new User(username, password, email, fullName, age, interests);
+
+        database.registerUser(user);
+        showAlert(Alert.AlertType.INFORMATION, "Registration", "User registered successfully.");
+        clearInputFields();
     }
 
     private boolean atLeastOneCategorySelected() {
@@ -210,24 +151,44 @@ public class appcontroller implements Initializable {
         return selectedInterests;
     }
 
-    private void registerUser(String username, String password, String email, String fullName, int age, List<String> interests) {
-        Document newUser = new Document("Username", username)
-                .append("Password", password)
-                .append("Email", email)
-                .append("Full_Name", fullName)
-                .append("Age", age)
-                .append("Interests", interests);
+    private void goToAdminPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-page.fxml"));
+            Parent adminPageRoot = loader.load();
 
-        Document userPreferences = new Document("Username", username);
-        for (String category : new String[]{"Entertainment", "Tech", "Lifestyle and Culture", "Sport", "Politics", "Science"}) {
-            userPreferences.append(category, interests.contains(category) ? 5 : 0);
+            AdminPage adminPageController = loader.getController();
+            adminPageController.setAdminUsername(Username);
+
+            Scene adminScene = new Scene(adminPageRoot);
+            Stage stage = (Stage) Username_text.getScene().getWindow();
+            stage.setScene(adminScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not load the admin page.");
         }
-
-        ArticlepointsCollection.insertOne(userPreferences);
-        userCollection.insertOne(newUser);
-        showAlert(Alert.AlertType.INFORMATION, "Registration", "User registered successfully.");
-        clearInputFields();
     }
+
+    private void goToUserPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("user-page.fxml"));
+            Parent userPageRoot = loader.load();
+
+            // Get the UserPage controller and pass the username
+            UserPage userPageController = loader.getController();
+            userPageController.setUsername(Username); // Call the correct method to set the username
+
+            // Load the scene
+            Scene userScene = new Scene(userPageRoot);
+            Stage stage = (Stage) Username_text.getScene().getWindow();
+            stage.setScene(userScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not load the user page.");
+        }
+    }
+
 
     private void clearInputFields() {
         Username_ID.clear();
@@ -247,7 +208,6 @@ public class appcontroller implements Initializable {
         mainpane.toFront();
     }
 
-    // UI Interaction Handlers
     @FXML
     public void buttonClicksConfig(ActionEvent actionEvent) {
         if (actionEvent.getSource() == back_to_main) {
@@ -264,7 +224,6 @@ public class appcontroller implements Initializable {
         javafx.application.Platform.exit();
     }
 
-    // Utility Method
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

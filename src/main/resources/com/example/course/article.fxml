@@ -8,10 +8,10 @@
 <AnchorPane prefHeight="452.0" prefWidth="707.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.course.ArticleView">
     <children>
         <WebView fx:id="webView" prefHeight="391.0" prefWidth="707.0" />
-        <Button fx:id="like_btn" layoutX="14.0" layoutY="401.0" mnemonicParsing="false" text="Like" />
-        <Button fx:id="dislike_btn" layoutX="67.0" layoutY="401.0" mnemonicParsing="false" text="Dislike" />
-        <Button fx:id="save_btn" layoutX="137.0" layoutY="401.0" mnemonicParsing="false" text="Save" />
-        <Button fx:id="rate_btn" layoutX="615.0" layoutY="401.0" mnemonicParsing="false" text="Submit" />
+        <Button fx:id="like_btn" layoutX="14.0" layoutY="401.0" mnemonicParsing="false" onAction="#onLikeButtonAction" text="Like" />
+        <Button fx:id="dislike_btn" layoutX="67.0" layoutY="401.0" mnemonicParsing="false" onAction="#onDisLikeButtonAction" text="Dislike" />
+        <Button fx:id="save_btn" layoutX="137.0" layoutY="401.0" mnemonicParsing="false" onAction="#saveArticles" text="Save" />
+        <Button fx:id="rate_btn" layoutX="615.0" layoutY="401.0" mnemonicParsing="false" onAction="#buttonClickedOnRate" text="Submit" />
         <ComboBox fx:id="rate_combobox" layoutX="450.0" layoutY="401.0" prefWidth="150.0" />
     </children>
 </AnchorPane>

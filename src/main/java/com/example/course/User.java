@@ -1,38 +1,21 @@
 package com.example.course;
 
-public class User {
-    private String username;
-    private String fullName;
-    private String email;
-    private int age;
-    private String interests;
+import java.util.List;
 
-    public User(String username, String fullName, String email, int age, String interests) {
-        this.username = username;
-        this.fullName = fullName;
-        this.email = email;
-        this.age = age;
+public class User extends Member {
+    private final List<String> interests;
+
+    public User(String username, String password, String email, String fullName, int age, List<String> interests) {
+        super(username, password, email, fullName, age);
         this.interests = interests;
     }
 
-    // Getters and setters
-    public String getUsername() {
-        return username;
+    @Override
+    public boolean authenticate(String password) {
+        return this.getPassword().equals(password);
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public String getInterests() {
+    public List<String> getInterests() {
         return interests;
     }
 }
